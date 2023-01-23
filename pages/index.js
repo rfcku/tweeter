@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import Tweet from "../components/Tweet";
+import Tweet from "../components/tweet";
 import Navbar from "../components/Navbar";
 import useSmartTweet from "../hooks/useSmartTweet";
 
