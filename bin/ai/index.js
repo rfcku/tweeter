@@ -10,12 +10,24 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+const models = [
+  "text-davinci-003",
+  "text-curie-001",
+  "text-ada-001",
+  "babbage",
+  "curie",
+  "davinci",
+  "davinci-codex",
+  "davinci-instruct-beta",
+  "davinci-instruct-beta-codex",
+];
+
 export default function ai() {
   return {
     tweet: async (text) => {
       return await openai
         .createCompletion({
-          model: "text-davinci-003",
+          model: models[0],
           prompt: text,
           max_tokens: 100,
           temperature: 0,

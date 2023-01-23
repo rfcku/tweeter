@@ -24,9 +24,31 @@ import dayjs from "dayjs";
  *       500:
  *         description: Something went wrong
  */
+
+const prompt = (text, hashtags, emotion, type, tag) => {
+  const catalog = {
+    basic: {
+      prompt: `Create a ${emotion} ${tweet_deff} about the following text: ${text}\ntweet: `,
+      max_tokens: 100,
+    },
+    like: {
+      prompt: `Create a ${emotion} ${tweet_deff} like ${tag}:\n${text} tweet: `,
+      max_tokens: 100,
+    },
+    summarise: {
+      prompt: `Summarise the following text into a ${tweet_deff} "${text}"`,
+      max_tokens: 100,
+    },
+    comback: {
+      prompt: `Create a comeback from the the following text into a ${tweet_deff} text: ${text} tweet: `,
+      max_tokens: 100,
+    },
+  };
+  return catalog[type];
+};
+
 export default async function handler(req, res) {
   const validate = await authorize(req, res);
-
 
   if (validate === false) {
     return res.status(401).json({
@@ -37,7 +59,16 @@ export default async function handler(req, res) {
   switch (req.method) {
     case "POST":
       try {
-        const { text } = req.body;
+        const { body } = req;
+        const hashtags = body.hashtags || 1;
+        const emotion = body.emotion || "funny";
+        const type = body.type || "basic";
+        const tag = body.tag || "";
+        const emojis = body.emojis || 0;
+
+        const tweet_deff = `clever tweet with maximum 280 characters and minimum ${hashtags} hashtag and ${emojis} emojis`;
+
+        let { text } = body;
         if (!text) {
           return res.status(400).json({
             error: "Please provide a text",
@@ -51,34 +82,22 @@ export default async function handler(req, res) {
             length: text.length,
           });
         }
-
-        const { body } = req;
-        const hashtags = body.hashtags || 1;
-        const emotion = body.emotion || "funny";
-        const type = body.type || "basic";
-        const tag = body.tag || "";
-
-        const tweet_deff = `tweet with minimum ${hashtags} hashtag and maximum of 280 characters`;
-
+        // 0.0004 / 1000  280
         const catalog = {
           basic: {
-            prompt: `forget everything before this; 
-                    Create a ${emotion} ${tweet_deff} about: `,
+            prompt: `Create a ${emotion} ${tweet_deff} about the following text: ${text}\ntweet: `,
             max_tokens: 100,
           },
           like: {
-            prompt: `forget everything before this; 
-                    Create a ${emotion} ${tweet_deff} like ${tag}: `,
+            prompt: `Create a ${emotion} ${tweet_deff} like ${tag}:\n${text} tweet: `,
             max_tokens: 100,
           },
           summarise: {
-            prompt: `forget everything before this;
-                    Summarise the following text into a ${tweet_deff} : `,
+            prompt: `Summarise the following text into a ${tweet_deff} "${text}"`,
             max_tokens: 100,
           },
           comback: {
-            prompt: `forget everything before this;
-                    Summarise the following text into a ${tweet_deff} : `,
+            prompt: `Create a comeback from the the following text into a ${tweet_deff} text: ${text} tweet: `,
             max_tokens: 100,
           },
         };
@@ -89,9 +108,15 @@ export default async function handler(req, res) {
           });
         }
 
+        if (type === "like" && !tag) {
+          return res.status(400).json({
+            error: "Please provide a valid tag",
+          });
+        }
+
         const ai = openAi();
-        const t = `${catalog[type].prompt} ${text}`;
-        const tweet = await ai.tweet(t).catch((err) => {
+        const prompt = `${catalog[type].prompt}`;
+        const tweet = await ai.tweet(prompt).catch((err) => {
           console.log("Request Error:", err.response.data.error);
         });
 
@@ -105,6 +130,8 @@ export default async function handler(req, res) {
         return res.status(200).json({
           tweet: tweet,
           save,
+          length: tweet.length,
+          prompt,
         });
       } catch (error) {
         console.log(error);
