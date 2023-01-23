@@ -8,7 +8,7 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
-
+  --primary-color: #1da1f2;
   --primary-glow: conic-gradient(
     from 180deg at 50% 50%,
     #16abff33 0deg,
@@ -33,7 +33,7 @@
     #00000010,
     #00000080
   );
-
+  
   --callout-rgb: 238, 240, 241;
   --callout-border-rgb: 172, 175, 176;
   --card-rgb: 180, 185, 188;
@@ -83,16 +83,13 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: rgb(63,94,251);
+  background: var(--secondary-glow);
 }
 
 a {
@@ -104,4 +101,83 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+/* Main Container */
+.tweet-container {
+  /* background: var(--primary-color);
+  
+  */
+  /* background-color: #fff; */
+  /* padding: 1rem 2rem; */
+  /* max-width: 400px; */
+  /* border-radius: 1.5rem; */
+  /* user-select: none; */
+  /* color: #000; */
+  /* min-width: 300px; */
+  /* border: 1px solid #e6ecf0; */
+}
+
+/* the title and the twitter handle */
+.title {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.title img {
+  width: 50px;
+  border-radius: 10rem;
+  border: 1px solid wheat;
+  margin-right: 1rem;
+}
+
+.info h4 {
+  font-size: 1.1rem;
+  line-height: 1.2rem;
+}
+
+.info p {
+  font-size: 0.8rem;
+  color: gray;
+  line-height: 1.2rem;
+}
+
+/* Main Tweet */
+.tweet {
+  padding: 0.8rem 0;
+  cursor: text;
+}
+
+.tweet p {
+  font-size: 1.2rem;
+}
+
+/* Tweet time and date section */
+
+.time-and-date {
+  color: gray;
+}
+
+.time-and-date p span {
+  color: #1da1f2;
+}
+
+/* Bottom feedback section */
+.bottom-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 0.7rem 0;
+  place-items: center;
+}
+
+.bottom-section svg {
+  width: 1.25em;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.7;
+}
+
+.bottom-section svg:hover {
+  opacity: 1;
 }
