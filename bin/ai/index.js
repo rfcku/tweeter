@@ -2,9 +2,7 @@ import fs from "fs";
 import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
-  apiKey:
-    process.env.OPENAI_API_KEY ||
-    "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",
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
