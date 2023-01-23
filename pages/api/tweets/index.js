@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 export default async function handler(req, res) {
   const validate = await authorize(req, res);
 
+
   if (validate === false) {
     return res.status(401).json({
       error: "Unauthorized",
@@ -40,6 +41,14 @@ export default async function handler(req, res) {
         if (!text) {
           return res.status(400).json({
             error: "Please provide a text",
+          });
+        }
+
+        const maxLength = 1000;
+        if (text.length >= maxLength) {
+          return res.status(400).json({
+            error: `Please provide a text less than ${maxLength} characters`,
+            length: text.length,
           });
         }
 
@@ -82,7 +91,9 @@ export default async function handler(req, res) {
 
         const ai = openAi();
         const t = `${catalog[type].prompt} ${text}`;
-        const tweet = await ai.tweet(t);
+        const tweet = await ai.tweet(t).catch((err) => {
+          console.log("Request Error:", err.response.data.error);
+        });
 
         const client = await mongodb;
         const db = client.db("tweets");
